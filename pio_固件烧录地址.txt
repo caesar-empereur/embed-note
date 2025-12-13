@@ -1,0 +1,38 @@
+## 用 flash download 下载合并固件的方法
+```
+boot_app0.bin  0x0000e000
+bootloader.bin 0x00000000
+firmware.bin   0x00010000
+partitions.bin 0x00008000
+
+开启加密后, 分区表要调整位 0x0000F000
+partitions.bin 0x0000F000
+
+上面的这些地址可以在 vscode 的烧录日志里面查看
+
+Compressed 15104 bytes to 10399...
+Writing at 0x00000000... (100 %)
+Wrote 15104 bytes 
+
+Hash of data verified.
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes 
+
+Hash of data verified.
+Compressed 8192 bytes to 47...
+Writing at 0x0000e000... (100 %)
+Wrote 8192 bytes
+
+Hash of data verified.
+Compressed 395728 bytes to 229715...
+Writing at 0x00010000... (6 %)
+
+
+boot_app0.bin 在这个文件路径
+C:\Users\yang\.platformio\packages\framework-arduinoespressif32\tools\partitions
+
+其他的3个在vscode build 目录里面
+
+合并后的固件    0x00000000
+
+```

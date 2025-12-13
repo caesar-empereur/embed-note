@@ -1,0 +1,31 @@
+- tft_espi 添加中文汉字字库操作
+```
+进入文件夹
+C:\Users\yang\Documents\Arduino\libraries\TFT_eSPI\Tools\Create_Smooth_Font\Create_font
+
+打开
+Create_font.pde  文件
+有几个要修改的地方
+
+fontNumber 的值改成 System_Font_List 这个文件里想要的字体前面的数字
+
+然后根据屏幕分辨率, 设置 fontSize 的大小, 太小的话在低分辨率的屏幕上会显示不清晰，这要自己测试
+
+把需要显示的汉字转成 0x 开头的大写的 unicode 码, 数组放到
+specificUnicodes 里面, 然后用 processing4 软件打开这个文件，点击运行，如果没问题，会显示
+刚刚转换的 汉字
+
+把这个目录下生成的 h 文件 Arduino\libraries\TFT_eSPI\Tools\Create_Smooth_Font\Create_font\FontFiles
+
+放到 TFT_eSPI/Fonts 文件夹里面
+
+Sprite.cpp Sprite 无法显示中文的问题
+因为代码里面 TFT_eSPI.cpp 最后引入了
+#ifdef SMOOTH_FONT
+  #include "Smooth_font.cpp"
+#endif
+而
+
+Sprite.cpp 文件没有引入这个文件
+因此把 TFT_eSPI.cpp 文件里的引入去掉，
+然后在 Sprite.cpp 文件里面引入

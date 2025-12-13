@@ -1,0 +1,7 @@
+## c 语言 extern 问题
+gesture.cpp
+里面 引入 receive-mavlink.cpp 或者 receive-mavlink.h 文件里面的 roll_now 变量时
+extern int roll_now;
+
+当 int roll_now = 0 写在 receive-mavlink.h 文件是会出现 redefinition 错误的
+得写在 receive-mavlink.cpp 文件中s

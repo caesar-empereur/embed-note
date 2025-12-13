@@ -1,0 +1,123 @@
+/*根据切线跟屏幕边缘的交点 绘制真正的地平线背景
+这个方法属于旧的算法，目前没用到，暂时留着
+*/
+void drawGraphByCutLineNew(TFT_eSprite *bgSprP, float l_pos_x, float l_pos_y, float r_pos_x, 
+                            float r_pos_y, int fbAngle, int bgSpW){
+    uint32_t sky_color, gr_color;
+
+    float min_y = min(l_pos_y, r_pos_y);
+    float max_y = max(l_pos_y, r_pos_y);
+    float min_x = min(l_pos_x, r_pos_x);
+    float max_x = max(l_pos_x, r_pos_x);
+
+    if(min_x<0 && max_x >bgSpW){
+        //切线落在左右两边
+        //左点在左边,正常的姿态, 左点在右边，姿态倒飞了
+        uint32_t up_color = l_pos_x<0 ? SKY_COLOR : GROUND_COLOR;
+        uint32_t down_color = l_pos_x<0 ? GROUND_COLOR : SKY_COLOR;
+        //上边的梯形分成2个三角形
+        float real_r_y = max_x==r_pos_x ? r_pos_y : l_pos_y;//这个右点还是要判断有没有左右颠倒
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, 0, up_color);//左点, 右点, (0,0)S
+        bgSprP->fillTriangle(max_x, real_r_y, 0, 0, bgSpW, 0, up_color);//(0,0), (240,0), 右点S
+
+        //下边的梯形分成2个三角形
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, bgSpW, down_color);//左点, 右点, (0,240)
+        bgSprP->fillTriangle(max_x, real_r_y, 0, bgSpW, bgSpW, bgSpW, down_color);//(0,240), (240,240), 右点
+        return;
+    }
+    
+    if(min_y<0 && max_y >bgSpW){
+        //切线落在上下两边
+        uint32_t l_color = l_pos_y<0 ? GROUND_COLOR : SKY_COLOR;
+        uint32_t r_color = l_pos_y<0 ? SKY_COLOR : GROUND_COLOR;
+        float real_r_x = max_y == r_pos_y ? r_pos_x : l_pos_x;//这个右点还是要判断有没有左右颠倒
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, 0, l_color);//左点, 右点, (0,0)
+        bgSprP->fillTriangle(real_r_x, max_y, 0, 0, 0, bgSpW, l_color);//(0,0), (0,240), 右点
+
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, bgSpW, 0, r_color);//左点, 右点, (240,0)
+        bgSprP->fillTriangle(real_r_x, max_y, bgSpW, 0, bgSpW, bgSpW, r_color);//(0,240), (240,240), 右点
+        return;
+    }
+    uint32_t top_color = fbAngle > 0 ? GROUND_COLOR : SKY_COLOR;
+    uint32_t other_color = fbAngle > 0 ? SKY_COLOR : GROUND_COLOR;
+
+    if(min_x<0 && max_y >bgSpW && min_y>0 && max_x<bgSpW){
+        //切线切中左下角三角形
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, bgSpW, top_color);//左点, 右点, (0,240)
+
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, 0, other_color);//左点, 右点, (0,0)
+        bgSprP->fillTriangle(0, 0, bgSpW, 0, max_x, max_y, other_color);//(0,0), (240,0), 右点
+        bgSprP->fillTriangle(max_x, max_y, bgSpW, 0, bgSpW, bgSpW, other_color);//(0,240), (240,240), 右点
+        return;
+    }
+    if(min_x<0 && max_y <bgSpW && max_x<bgSpW && min_y<0){
+        //切线切中左上角三角形
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, 0, top_color);//左点, 右点, (0,0)
+
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, bgSpW, other_color);//左点, 右点, (0,240)
+        bgSprP->fillTriangle(0, bgSpW, bgSpW, bgSpW, max_x, min_y, other_color);//(0,240), (240,240), 右点
+        bgSprP->fillTriangle(max_x, min_y, bgSpW, 0, bgSpW, bgSpW, other_color);//(0,240), (240,240), 右点
+        return;
+    }
+    if(max_x>bgSpW && min_y <0 && max_y<bgSpW && min_x>0){
+        //切线切中右上角三角形
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, bgSpW, 0, top_color);//左点, 右点, (240,0)
+
+
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, 0, other_color);//左点, 右点, (0,0)
+        bgSprP->fillTriangle(0, 0, 0, bgSpW, max_x, max_y, other_color);//(0,0), (0,240), 右点
+        bgSprP->fillTriangle(max_x, max_y, 0, bgSpW, bgSpW, bgSpW, other_color);//(0,240), (240,240), 右点
+        return;
+    }
+    if(max_x>bgSpW && max_y >bgSpW && min_x>0 && min_y>0){
+        //切线切中右下角三角形
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, bgSpW, bgSpW, top_color);//左点, 右点, (240,240)
+
+        bgSprP->fillTriangle(l_pos_x, l_pos_y, r_pos_x, r_pos_y, 0, bgSpW, other_color);//左点, 右点, (0,240)
+        bgSprP->fillTriangle(0, 0, 0, bgSpW, max_x, min_y, other_color);//(0,0), (0,240), 右点
+        bgSprP->fillTriangle(max_x, min_y, 0, 0, bgSpW, 0, other_color);//(0,0), (240,0), 右点
+        return;
+    }
+}
+
+/**
+ * 这里画地平线的思路：
+ * 先只算横滚 roll 的角度, 就是让地平线随着圆点左右倾斜，前后俯仰的角度先不算
+ * 然后根据前后俯仰的角度，把已经左右旋转的地平线上下移动对应俯仰的角度
+ * 这里需要把屏幕的4边放在一个刚好切4个顶点的圆形里，相当于4方形的斜线是圆的直径
+ * 最终的地平线的左右坐标是落在圆的圆周上，但是因为屏幕的4周在4方形里，超出4方形的
+ * 部分不会显示, 最终地平线会切到屏幕的正方形的对应2条边
+ * 这里不去计算地平线切正方形2条边的坐标(也就是把正方形按照切线分成很多个三角形)
+ * 而是地平线在圆周上的坐标跟四方形的4个顶点组成多个三角形，最后把圆形切割
+ * 正方形也会被切割的，超过正方形的在圆形里的部分不会显示
+ */
+void drawSkyGroudAngle(TFT_eSprite *bgSprP, int pitch, int roll){
+    if(pitch >= 60 && pitch <= 120){
+      //前后向上倾斜在水平线上面的 的 60-120 之间，左右再怎么倾斜都没法看到地面,都是天空
+      bgSprP->fillScreen(SKY_COLOR);
+      return;
+    }
+    if((pitch >= -120 && pitch <= -60) || (pitch >= 240 && pitch <= 300)){
+      //前后向下倾斜在水平线体面的 60-120 之间，左右再怎么倾斜都没法看到天空,都是地面
+      bgSprP->fillScreen(GROUND_COLOR);
+      return;
+    }
+
+    int a_angle = radians_to_degrees(acos(abs(pitch)/(45 * 1.41)));
+    int l_angle, r_angle;
+    if(pitch > 0){
+        l_angle = 270 + (roll - (90 - a_angle));
+        r_angle = l_angle - 2 * a_angle;
+    } else {
+        l_angle = 270 + (roll + (90 - a_angle));
+        r_angle = l_angle + 2 * a_angle;
+    }
+    float radius = 120 * 1.41;
+    float l_pos_x = 120 + radius * sin(radians(l_angle));
+    float l_pos_y = 120 - radius * cos(radians(l_angle));
+
+    float r_pos_x = 120 + radius * sin(radians(r_angle));
+    float r_pos_y = 120 - radius * cos(radians(r_angle));
+
+    drawGraphByCutLineNew(bgSprP, l_pos_x, l_pos_y, r_pos_x, r_pos_y, pitch, 240);
+}

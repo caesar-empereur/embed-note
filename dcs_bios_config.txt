@@ -1,0 +1,13 @@
+
+DcsBios.h
+
+文件增加下面这个宏配置
+
+#ifndef __DCSBIOS_H
+#define __DCSBIOS_H
+
+#define DCSBIOS_DISABLE_SERVO 1
+
+DcsBios::setup(); 函数里的波特率改为 115200
+
+ConnectSeralPort.cmd 里的 波特率也改为 115200

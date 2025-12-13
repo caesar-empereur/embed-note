@@ -1,0 +1,20 @@
+## S3 使用 DMA 的方法
+```
+#define SPI_FREQUENCY  80000000
+
+#define USE_HSPI_PORT
+
+除了 CS 引脚，其他的只能用这些固定的引脚连接屏幕
+因为这些引脚属于 S3 的 HSPI 专用的引脚
+
+#define TFT_MOSI 11
+#define TFT_SCLK 12
+#define TFT_CS   10  // Chip select control pin
+#define TFT_DC   9  // Data Command control pin
+#define TFT_RST  46  // Reset pin (could connect to Arduino RESET pin)
+#define TFT_BL   7  // LED back-light
+#define TFT_MISO 13
+
+s3 的 HSPI 引脚定义文件在
+C:\Users\yang\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.10\cores\esp32
+esp32-hal-spi.c 里面

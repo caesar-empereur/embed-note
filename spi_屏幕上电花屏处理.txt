@@ -1,0 +1,16 @@
+## spi 屏幕上电花屏的处理
+```
+void setup() {
+    tft.init();
+    tft.fillScreen(TFT_RED);
+    delay(100);
+    pinMode(BL_PIN, OUTPUT);
+    digitalWrite(BL_PIN, HIGH);
+}
+
+关键就是显示颜色的时候，背光先推迟拉高
+写入颜色的时候，颜色字节数据应该还在缓冲区，
+背光打开颜色就可以正常显示
+
+这个背光在多屏的时候，不能接 3v，不然会导致 init 函数调用的
+时候出现花屏

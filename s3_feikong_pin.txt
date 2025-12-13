@@ -1,0 +1,78 @@
+- 1创建工程文件时选择对应的开发板,框架，项目路径
+- 2在pio home 的页面-libararys里面把tft，依赖添加到项目
+- 3在 .vscode 目录里面添加 settings.json 文件, 让vscode识别 arduino框架
+```
+    {
+        "arduino.path":"C:\\Program Files\\Arduino IDE",
+        "C Cpp.intelliSenseEngineFallback":"Disabled",
+        "C_Cpp.intelliSenseEngine":"Tag Parser",
+        "arduino.additionalUrls":""
+    }
+```
+- 4 修改 .pio/libdeps/TFT_eSPI/User_Setup.h 的引脚输出
+```
+Only define one driver, the other ones must be commented out
+55 #define ST7789_DRIVER
+上面这里只保留 7789 的驱动
+
+88 #define TFT_WIDTH  240
+93 #define TFT_HEIGHT 240
+
+223-228 行
+#define TFT_MOSI 9
+#define TFT_SCLK 18
+#define TFT_CS   5  // Chip select control pin
+#define TFT_DC   12  // Data Command control pin
+#define TFT_RST  4  // Reset pin (could connect to Arduino RESET pin)
+#define TFT_BL   7  // LED back-light
+
+364 #define SPI_FREQUENCY  40000000
+```
+
+- 5 esp32开发板跟st7789 tft 屏幕接线
+```
+tft  esp32
+
+VCC  3V3
+GND  GND
+#define TFT_MOSI 9
+#define TFT_SCLK 18
+#define TFT_CS   5  // Chip select control pin
+#define TFT_DC   12  // Data Command control pin
+#define TFT_RST  4  // Reset pin (could connect to Arduino RESET pin)
+#define TFT_BL   7  // LED back-light
+```
+
+- 5 esp32 s3开发板跟st7789 tft 屏幕接线
+```
+tft  esp32
+
+#define TFT_MOSI 9
+#define TFT_SCLK 18
+#define TFT_CS   5  // Chip select control pin
+#define TFT_DC   12  // Data Command control pin
+#define TFT_RST  4  // Reset pin (could connect to Arduino RESET pin)
+#define TFT_BL   7  // LED back-light
+```
+
+
+- F4飞控跟 esp32 接线
+```
+一边的RX 要对应另外一边的TX
+
+f4  esp32
+5v  vin
+R4  D17 TX2
+T4  D16 RX2
+```
+
+- F4飞控跟 esp32 S3 接线
+```
+esp32 s3 的UART2的引脚定义在
+C:\Users\yang\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.11\cores\esp32\HardwareSerial.cpp文件查看
+f4  esp32
+GND GND
+5v  vin
+R4  D20 TX2
+T4  D19 RX2
+```
