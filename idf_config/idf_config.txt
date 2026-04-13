@@ -1,0 +1,42 @@
+## mavlink 库的地址
+```
+MAVLink:
+    git: https://github.com/okalachev/mavlink-arduino.git
+    version: "2.0.5"
+```
+
+## idf 插件头文件代码显示红色的处理
+- ctrl + shift + p 输入  vscode add configuration folder
+
+## CONFIG_AUTOSTART_ARDUINO
+
+## main 调用 c++ 文件的问题
+```
+main 如果是 .c 文件，esp 的 bootloader 调用 main 会按照 c 编译器来编译全部文件
+这样 lib 文件夹里的 c++ 代码的特性是无法被识别，会报错的，unknow class
+
+main.cpp 里面的 app_main 函数如果没有 extern C, 会提示找不到 app_main undefined reference
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+如果包含 C++ 代码的头文件，会显示 template with C linkage template
+```
+
+## idf 官方文档
+```
+https://docs.espressif.com/projects/esp-idf/zh_CN/v4.4.6/esp32s3/api-guides/flash_psram_config.html?highlight=psram
+```
+
+## vscode 安装 esp-idf 插件后需要配置的东西
+- 点击 vscode 的 idf 插件图标
+-  Advanced-->Configure ESP-IDF-->ADVANCED
+- select downloader server 选择 乐鑫的
+- 其他选项插件会自动选择 C 盘里已经安装好的 idf 的路径
+- 最后选择 install tool
